@@ -7,14 +7,20 @@ def main():
 
     game = pygame.init()
     screen = pygame.display.set_mode((CONST.SCREEN_WIDTH, CONST.SCREEN_HEIGHT))
-    running = True
+    clock = pygame.time.Clock()
+    delta_time = 0
 
+    running = True
     while running:
         screen.fill('#000000')
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 return
+
+        tick = clock.tick(60)
+        delta_time = tick / 1000
 
 
 def print_start():
