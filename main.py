@@ -1,32 +1,65 @@
+import sys
 import pygame
-import constants as CONST
+from constants import *
+from player import Player
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
+from shot import Shot
 
 
 def main():
     print_start()
 
-    game = pygame.init()
-    screen = pygame.display.set_mode((CONST.SCREEN_WIDTH, CONST.SCREEN_HEIGHT))
-    clock = pygame.time.Clock()
-    delta_time = 0
+    pygame.init()
 
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    clock = pygame.time.Clock()
+
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    asteroids = pygame.sprite.Group()
+
+    Player.containers = (updatable, drawable)
+    player = Player(CENTER_WIDTH, CENTER_HEIGHT)
+
+    Asteroid.containers = (asteroids, updatable, drawable)
+
+    AsteroidField.containers = (updatable)
+    asterid_field = AsteroidField()
+
+    Shot.containers = (updatable, drawable)
+    shots = pygame.sprite.Group()
+
+    delta_time = 0
     running = True
     while running:
-        screen.fill('#000000')
+        screen.fill(SCREEN_COLOR)
+
+        updatable.update(delta_time)
+
+        for item in asteroids:
+            if item.detect_collision(player):
+                print("Game over!")
+                sys.exit()
+
+        for item in drawable:
+            item.draw(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 return
 
-        tick = clock.tick(60)
-        delta_time = tick / 1000
+        tick = clock.tick(60.0)
+        delta_time = tick / 1000.0
+
+        pygame.display.flip()
 
 
 def print_start():
     print("Starting Asteroids!")
-    print(f"Screen width: {CONST.SCREEN_WIDTH}")
-    print(f"Screen height: {CONST.SCREEN_HEIGHT}")
+    print(f"Screen width: {SCREEN_WIDTH}")
+    print(f"Screen height: {SCREEN_HEIGHT}")
 
 
 if __name__ == '__main__':
