@@ -28,7 +28,7 @@ def main():
     AsteroidField.containers = (updatable)
     asterid_field = AsteroidField()
 
-    Shot.containers = (updatable, drawable)
+    Shot.containers = (shots, updatable, drawable)
 
     delta_time = 0
     running = True
@@ -37,13 +37,15 @@ def main():
 
         updatable.update(delta_time)
 
-        for item in asteroids:
-            if item.detect_collision(player):
+        for roid in asteroids:
+            if roid.detect_collision(player):
                 print("Game over!")
-                pygame.quit()
+                sys.exit()
 
-            if item.detect_collision(shots):
-                item.kill()
+            for bullet in shots:
+                if roid.detect_collision(bullet):
+                    roid.split()
+                    bullet.kill()
 
         for item in drawable:
             item.draw(screen)
